@@ -6,6 +6,7 @@ scalaVersion := "2.13.1"
 
 val Http4sVersion = "0.21.0-M6"
 val ZIOVersion = "1.0.0-RC17"
+val CirceVersion = "0.12.0-M3"
 
 libraryDependencies ++= Seq(
   // ZIO
@@ -16,7 +17,11 @@ libraryDependencies ++= Seq(
   // Http4s
   "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
   "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
-  "org.http4s" %% "http4s-dsl" % Http4sVersion
+  "org.http4s" %% "http4s-circe" % Http4sVersion,
+  "org.http4s" %% "http4s-dsl" % Http4sVersion,
+  // Circe
+  "io.circe" %% "circe-generic" % CirceVersion,
+  "io.circe" %% "circe-generic-extras" % CirceVersion
 )
 
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")

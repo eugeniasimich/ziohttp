@@ -1,5 +1,6 @@
-import Server.{Env, MIO}
+import main.{Env, MIO}
 import cats.effect.Resource
+import model.User
 import org.http4s.EntityDecoder._
 import org.http4s.Response
 import org.http4s.client.Client
@@ -22,11 +23,15 @@ class Controller(client: Resource[MIO, Client[MIO]]) {
     Ok("Number " + n)
 
   def ask(n: Int): MIO[Response[MIO]] = {
-    val uri = uri"http://localhost:8080".withPath(s"/$n")
+    val uri = uri"http://localhost:8089".withPath(s"/$n")
     for {
       implicit0(rt: Runtime[Env]) <- ZIO.runtime[Env]
       ans <- client.use(_.expect[String](GET(uri)))
       response <- Ok("Answer: " + ans)
     } yield response
   }
+  def echoUser(user: User): MIO[Response[MIO]] = {
+    Ok("User id: " + user.id + ". User name: " +  user.name)
+  }
+
 }
