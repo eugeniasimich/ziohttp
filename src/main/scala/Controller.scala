@@ -1,4 +1,4 @@
-import main.{Env, MIO}
+import main.{Env, MConfig, MIO}
 import cats.effect.Resource
 import model.User
 import org.http4s.EntityDecoder._
@@ -9,6 +9,7 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits._
 import zio.interop.catz._
 import zio.{Runtime, ZIO}
+import zio.config.{config => zioconfig}
 
 class Controller(client: Resource[MIO, Client[MIO]]) {
   val dsl = new Http4sDsl[MIO] {}
@@ -23,13 +24,14 @@ class Controller(client: Resource[MIO, Client[MIO]]) {
     Ok("Number " + n)
 
   def ask(n: Int): MIO[Response[MIO]] = {
-    val uri = uri"http://localhost:8089".withPath(s"/$n")
     for {
       implicit0(rt: Runtime[Env]) <- ZIO.runtime[Env]
-      ans <- client.use(_.expect[String](GET(uri)))
+      u <- zioconfig[MConfig].flatMap(_.buildRootUri)
+      ans <- client.use(_.expect[String](GET(u / n.toString)))
       response <- Ok("Answer: " + ans)
     } yield response
   }
+
   def echoUser(user: User): MIO[Response[MIO]] = {
     Ok("User id: " + user.id + ". User name: " +  user.name)
   }

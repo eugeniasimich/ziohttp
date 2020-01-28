@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC10",
   "dev.zio" %% "zio-test" % ZIOVersion % "test",
   "dev.zio" %% "zio-test-sbt" % ZIOVersion % "test",
+  "dev.zio" %% "zio-config" % "1.0.0-RC9",
   // Http4s
   "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
   "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
