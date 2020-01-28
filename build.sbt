@@ -21,7 +21,9 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-dsl" % Http4sVersion,
   // Circe
   "io.circe" %% "circe-generic" % CirceVersion,
-  "io.circe" %% "circe-generic-extras" % CirceVersion
+  "io.circe" %% "circe-generic-extras" % CirceVersion,
+  // Logback
+  "ch.qos.logback" % "logback-classic" % "1.2.3"
 )
 
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
