@@ -1,16 +1,22 @@
-import zio.{ZIO, clock}
+import zio.ZIO
 import zio.clock.Clock
 import zio.config.{Config, ConfigDescriptor}
 import ConfigDescriptor.{int, string}
+import io.circe.{Decoder, Encoder}
 import zio.console.Console
 import zio.system.System
-import org.http4s.UriTemplate
-import org.http4s.Uri
+import org.http4s.{EntityDecoder, EntityEncoder, Uri, UriTemplate}
+import org.http4s.circe.{jsonEncoderOf, jsonOf}
+import zio.interop.catz._
 
 package object main {
 
   type Env = Clock with Console with System with Config[MConfig]
   type MIO[A] = ZIO[Env, Throwable, A]
+
+  implicit def circeJsonDecoder[A](implicit decoder: Decoder[A]): EntityDecoder[MIO, A] = jsonOf[MIO, A]
+  implicit def circeJsonEncoder[A](implicit decoder: Encoder[A]): EntityEncoder[MIO, A] = jsonEncoderOf[MIO, A]
+
 
   case class MConfig(host: String, port: Int, dburl: String){
     def buildRootUri: MIO[Uri] = {
