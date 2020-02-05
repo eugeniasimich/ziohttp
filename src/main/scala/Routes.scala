@@ -20,6 +20,8 @@ class Routes(controller: Controller) {
       request.decode[User] { user =>
         echoUser(user)
       }
+    case GET -> Root / "justShow" => showToken
+    case GET -> Root / "get" => getTokenTotal
   }.orNotFound
 
 }

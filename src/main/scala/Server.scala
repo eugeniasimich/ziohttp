@@ -23,10 +23,11 @@ object Server extends App {
   } yield s
 
 
-    def run(args: List[String]) = for {
-      configEnv <- Config.fromMap(Map("HOST" -> "localhost", "PORT" -> "8089", "DB_URL" -> "localhost"), mconfig)
-          .orDieWith(_ => new Error("Config Error"))
-      x <- server.provide(Live(configEnv.config)).fold(_ => 1, _ => 0)
-    } yield x
+  def run(args: List[String]) = for {
+    configEnv <- Config.fromMap(Map("HOST" -> "localhost", "PORT" -> "8089", "DB_URL" -> "localhost"), mconfig)
+        .orDieWith(_ => new Error("Config Error"))
+    tokenRef <- Ref.make[Option[Int]](None)
+    x <- server.provide(Live(configEnv.config, tokenRef)).fold(_ => 1, _ => 0)
+  } yield x
 
 }
