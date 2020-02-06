@@ -11,8 +11,7 @@ import zio.interop.catz._
 import zio.{Runtime, ZIO}
 import zio.config.{config => zioconfig}
 import io.circe.generic.auto._
-import zio.clock.currentTime
-import zio.duration._
+
 class Controller(client: Resource[MIO, Client[MIO]]) {
   val dsl = new Http4sDsl[MIO] {}
   import dsl._
@@ -40,21 +39,7 @@ class Controller(client: Resource[MIO, Client[MIO]]) {
     Ok(user)
   }
 
-  def showToken: MIO[Response[MIO]] =
-    ZIO.accessM[DynamicConfig[Any]](_.token.get) >>= {tok => Ok(tok.mkString("TOKEN <", ", ", ">"))}
-
-  def getTokenTotal: MIO[Response[MIO]] =  refreshTokenIfNeeded *> showToken
-
-  def doUpdateToken = for {
-    time <- currentTime(TimeUnit.SECONDS)
-    _ <- ZIO.accessM[DynamicConfig[Any]](_.token.set(Some(time.toInt)))
-    _ <- expireTokenIn(10.seconds).fork
-  } yield ()
-
-  def expireTokenIn(time: Duration) =
-    ZIO.accessM[DynamicConfig[Any]](_.token.set(None)).delay(time)
-
-  def refreshTokenIfNeeded: MIO[Unit] =
-    ZIO.accessM[DynamicConfig[Any]](_.token.get) >>= {tok => doUpdateToken.when(tok.isEmpty)}
+  def showToken =
+    ZIO.accessM[TokenProvider](_.tokenProvider.getToken) >>= { t => Ok("TOKEN:" + t.i)}
 
 }

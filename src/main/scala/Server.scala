@@ -1,10 +1,12 @@
-import main.{Env, MIO, Live, mconfig, MConfig}
+import TokenProvider.Token
+import main.{Env, Live, MConfig, MIO, mconfig}
 import org.http4s.client.blaze.BlazeClientBuilder
 import org.http4s.server.blaze.BlazeServerBuilder
 import zio._
 import zio.interop.catz._
 import zio.config.Config
 import zio.config.{config => zioconfig}
+
 import scala.concurrent.ExecutionContext.global
 
 
@@ -26,7 +28,7 @@ object Server extends App {
   def run(args: List[String]) = for {
     configEnv <- Config.fromMap(Map("HOST" -> "localhost", "PORT" -> "8089", "DB_URL" -> "localhost"), mconfig)
         .orDieWith(_ => new Error("Config Error"))
-    tokenRef <- Ref.make[Option[Int]](None)
+    tokenRef <- Ref.make[Option[Token]](None)
     x <- server.provide(Live(configEnv.config, tokenRef)).fold(_ => 1, _ => 0)
   } yield x
 
